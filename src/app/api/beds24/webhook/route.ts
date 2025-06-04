@@ -4,7 +4,7 @@ import { NextRequest } from "next/server"
 export async function GET(req: NextRequest) {
   try {
     const data = await req.json()
-    await db.collection('bookings').insertOne({ type: 'GET', data })
+    await db.collection('bookings').insertOne({ type: 'GET', data, bookingId: data?.booking?.id  })
   } catch (e: any) {
     console.log(e)
   }
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json()
-    await db.collection('bookings').insertOne({ type: 'POST', data })
+    await db.collection('bookings').insertOne({ type: 'POST', data, bookingId: data?.booking?.id })
   } catch (e: any) {
     console.log(e)
   }
