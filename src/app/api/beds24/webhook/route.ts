@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     var isConfirmed = data.booking.confirmed ? true : false
     var isPaid = invoiceItems
     .filter((item: any) => (item.type === 'payment'))
-    .findIndex((item: any) => item.status == 'Paid' || item.status == 'Plata' ) !== -1
+    .findIndex((item: any) => item.status == 'Paid' ) !== -1
 
     if ( !address || !county || !isConfirmed || !isPaid ) {
       return Response.json({ success: true })
