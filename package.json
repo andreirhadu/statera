@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^2.2.0",
+    "axios": "^1.9.0",
     "mongodb": "^6.17.0",
     "next": "15.3.3",
     "react": "^19.0.0",
