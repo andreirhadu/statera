@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
     .filter((item: any) => (item.type === 'payment'))
     .findIndex((item: any) => item.status == 'Paid' ) !== -1
 
+    await db.collection('logs').insertOne({ bookingId: booking.id, address, county, isConfirmed, isPaid, invoiceItems })
+
     if ( !address || !county || !isConfirmed || !isPaid ) {
       return Response.json({ success: true })
     }
