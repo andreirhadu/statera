@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     var address = data.booking.custom9.length != 0 ? data.booking.custom9 : null
     var vatCode = data.booking.custom6.length != 0 ? data.booking.custom6 : undefined
     var company = data.booking.custom5.length != 0 ? data.booking.custom5 : null
-    var isConfirmed = data.booking.confirmed ? true : false
+    var isConfirmed = booking.status == 'confirmed' ? true : false
     var isPaid = invoiceItems
     .filter((item: any) => (item.type === 'payment'))
     .findIndex((item: any) => item.status == 'Paid' ) !== -1
