@@ -9,6 +9,12 @@ export async function POST(req: NextRequest) {
     const data = await req.json()
     const booking = data?.booking
 
+    const invoice = await db.collection('invoices').findOne({ bookingId: booking?.id })
+
+    if ( invoice ) {
+      return Response.json({ success: true })
+    }
+
     // Salvează webhook-ul pentru audit
     await db.collection('bookings').insertOne({ type: 'POST', data, bookingId: booking?.id })
 
