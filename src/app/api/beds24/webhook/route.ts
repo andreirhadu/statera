@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     // Salvează webhook-ul pentru audit
     await db.collection('bookings').insertOne({ type: 'POST', data, bookingId: booking?.id })
 
-    const invoiceItems = data?.booking?.invoiceItems || []
+    const invoiceItems = data?.invoiceItems || []
 
     // Date client
     var name = `${booking.firstName} ${booking.lastName}`
@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
     var phone = booking.phone
     var city = booking.city
     var country = booking.country ? (booking.country.length != 0 ? booking.country.toUpperCase() : 'RO') : 'RO'
-    var county = data.booking.custom7.length != 0 ? data.booking.custom7 : null
-    var address = data.booking.custom9.length != 0 ? data.booking.custom9 : null
+    var county = data.booking.custom7.length != 0 ? data.booking.custom7.replace("Judet/County : ", "") : null
+    var address = data.booking.custom9.length != 0 ? data.booking.custom9.replace("Strada, nr/Street, no : ", "") : null
     var vatCode = data.booking.custom6.length != 0 ? data.booking.custom6 : undefined
     var company = data.booking.custom5.length != 0 ? data.booking.custom5 : null
     var isConfirmed = booking.status == 'confirmed' ? true : false
