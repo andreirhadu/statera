@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     const price = invoiceItems
     .filter((item: any) => (item.type === 'payment'))
-    .map((item: any) => item.amount)
+    .reduce((prev: any, curr: any) => curr.amount + prev, 0)
 
     const products = [{
         name: `Rezervare ${booking.arrival} - ${booking.departure}`,
