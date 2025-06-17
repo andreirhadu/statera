@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ success: true })
     }
 
-    const channel = booking.lastName.includes('Szallas.hu') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
+    const channel = booking.lastName.toLowerCase().includes('Szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
 
     if ( channel == 'travelminit' ) {
       name = 'Travelminit International SRL'
@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
     //   await sendMail({
     //     to: email,
     //     nameSender: 'Statera',
-    //     subject: `Factura ${response.data.series}-${response.data.number} - Statera`, 
+    //     subject: `Factura ${response.data.series}-${response.data.number} - Rezervare confirmată`, 
     //     html: generateInvoiceTemplate({ companyName: 'Statera' }),
     //     attachments: [{ content: base64, name: `Factura ${response.data.series}-${response.data.number}.pdf`}],
     //   })
