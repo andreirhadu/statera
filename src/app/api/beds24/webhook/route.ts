@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     const channel = booking.lastName.toLowerCase().includes('Szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
 
-    if ( channel == 'travelminit' ) {
+    if ( channel === 'travelminit' ) {
       name = 'Travelminit International SRL'
       vatCode = 'RO38869249'
       address = 'Str. Gării, Nr. 21, D1/1B'
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       county = 'Cluj'
     }
 
-    if ( channel == 'travelminit' ) {
+    if ( channel === 'airbnb' ) {
       name = 'Earthport PLC/Airbnb'
       vatCode = undefined
       address = undefined
@@ -111,30 +111,30 @@ export async function POST(req: NextRequest) {
       }
     )
 
-    // const response1 = await axios.get(`https://ws.smartbill.ro/SBORO/api/invoice/pdf?cif=RO35750609&seriesname=${response.data.series}&number=${response.data.number}`, {
-    //   responseType: 'arraybuffer',
-    //   responseEncoding: 'binary',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Accept': 'application/octet-stream',
-    //     'authorization': `Basic ${process.env.SMARTBILL_KEY}`,
-    //     'Content-Disposition': 'attachment; filename=new.pdf'
-    //   }
-    // })
+    const response1 = await axios.get(`https://ws.smartbill.ro/SBORO/api/invoice/pdf?cif=RO35750609&seriesname=${response.data.series}&number=${response.data.number}`, {
+      responseType: 'arraybuffer',
+      responseEncoding: 'binary',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/octet-stream',
+        'authorization': `Basic ${process.env.SMARTBILL_KEY}`,
+        'Content-Disposition': 'attachment; filename=new.pdf'
+      }
+    })
 
-    // const base64 = Buffer.from(response1.data).toString("base64")
+    const base64 = Buffer.from(response1.data).toString("base64")
 
-    // try {
-    //   await sendMail({
-    //     to: email,
-    //     nameSender: 'Statera',
-    //     subject: `Factura ${response.data.series}-${response.data.number} - Rezervare confirmată`, 
-    //     html: generateInvoiceTemplate({ companyName: 'Statera' }),
-    //     attachments: [{ content: base64, name: `Factura ${response.data.series}-${response.data.number}.pdf`}],
-    //   })
-    // } catch (e: any) {
-    //   console.log(e)
-    // }
+    try {
+      await sendMail({
+        to: email,
+        nameSender: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea',
+        subject: `Factura ${response.data.series}-${response.data.number} - ${booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea'}`, 
+        html: generateInvoiceTemplate({ companyName: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea' }),
+        attachments: [{ content: base64, name: `Factura ${response.data.series}-${response.data.number}.pdf`}],
+      })
+    } catch (e: any) {
+      console.log(e)
+    }
 
     await db.collection('invoices').insertOne({ bookingId: booking?.id, series: response.data.series, number: response.data.number })
     return Response.json({ success: true })
