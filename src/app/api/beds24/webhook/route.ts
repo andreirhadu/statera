@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       address = 'Str. Gării, Nr. 21, D1/1B'
       city = 'Cluj Napoca'
       county = 'Cluj'
-      isPaid = (charge && charge !== 0) ? true : false
+      isPaid = (charge && charge.amount !== 0) ? true : false
     }
 
     if ( channel === 'airbnb' ) {
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       address = "-"
       city = 'San Francisco'
       county = 'USA'
-      isPaid = (charge && charge !== 0) ? true : false
+      isPaid = (charge && charge.amount !== 0) ? true : false
     }
 
     if ( !address || !county || !isConfirmed || !isPaid ) {
