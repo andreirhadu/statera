@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     .filter((item: any) => (item.type === 'payment'))?.[0]?.description
 
     const charge = invoiceItems
-    .filter((item: any) => (item.type === 'charges'))?.[0]
+    .filter((item: any) => (item.type === 'charge'))?.[0]
 
     var products = [{
       name: `Servicii cazare perioada ${booking.arrival} - ${booking.departure} (${paymentMethod})`,
