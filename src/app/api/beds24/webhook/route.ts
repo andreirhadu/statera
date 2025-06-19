@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
       address = 'Str. Gării, Nr. 21, D1/1B'
       city = 'Cluj Napoca'
       county = 'Cluj'
+      isPaid =  true
     }
 
     if ( channel === 'airbnb' ) {
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
       address = "-"
       city = 'San Francisco'
       county = 'USA'
+      isPaid = true
     }
 
     if ( !address || !county || !isConfirmed || !isPaid ) {
@@ -67,11 +69,11 @@ export async function POST(req: NextRequest) {
     const paymentMethod = invoiceItems
     .filter((item: any) => (item.type === 'payment'))?.[0]?.description
 
-    const invoiceLine = invoiceItems
-    .filter((item: any) => (item.type === 'charges'))?.[0]?.description
+    const charge = invoiceItems
+    .filter((item: any) => (item.type === 'charges'))?.[0]
 
-    const products = [{
-      name: channel === 'travelminit' ? invoiceLine || 'Servicii cazare' : `Servicii cazare perioada ${booking.arrival} - ${booking.departure} (${paymentMethod})`,
+    var products = [{
+      name: `Servicii cazare perioada ${booking.arrival} - ${booking.departure} (${paymentMethod})`,
       isDiscount: false,
       measuringUnitName: 'sejur',
       currency: 'RON',
@@ -82,6 +84,36 @@ export async function POST(req: NextRequest) {
       taxPercentage: 9,
       saveToDb: false
     }]
+
+    if ( channel === 'travelminit' && charge ) {
+      products = [{
+        name: charge.description,
+        isDiscount: false,
+        measuringUnitName: 'sejur',
+        currency: 'RON',
+        quantity: 1,
+        price: charge.amount,
+        isTaxIncluded: true,
+        taxName: 'Redusa',
+        taxPercentage: 9,
+        saveToDb: false
+      }]
+    }
+
+    if ( channel === 'airbnb' && charge ) {
+      products = [{
+        name: `Servicii cazare perioada ${booking.arrival} - ${booking.departure}`,
+        isDiscount: false,
+        measuringUnitName: 'sejur',
+        currency: 'RON',
+        quantity: 1,
+        price: charge.amount,
+        isTaxIncluded: true,
+        taxName: 'Redusa',
+        taxPercentage: 9,
+        saveToDb: false
+      }]
+    }
 
     // Emitere factură SmartBill
     const response = await axios.post(
@@ -133,13 +165,15 @@ export async function POST(req: NextRequest) {
     const base64 = Buffer.from(response1.data).toString("base64")
 
     try {
-      await sendMail({
-        to: channel === 'travelminit' ? 'mentor@travelminit.ro' : email,
-        nameSender: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea',
-        subject: channel === 'travelminit' ? invoiceLine || '-' : `Factura ${response.data.series}-${response.data.number} - ${booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea'}`, 
-        html: channel === 'travelminit' ? invoiceLine || '-' : generateInvoiceTemplate({ companyName: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea' }),
-        attachments: [{ content: base64, name: `Factura ${response.data.series}-${response.data.number}.pdf`}],
-      })
+      if ( channel === 'other' ) {
+        await sendMail({
+          to: email,
+          nameSender: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea',
+          subject: `Factura ${response.data.series}-${response.data.number} - ${booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea'}`, 
+          html: generateInvoiceTemplate({ companyName: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea' }),
+          attachments: [{ content: base64, name: `Factura ${response.data.series}-${response.data.number}.pdf`}],
+        })
+      }
     } catch (e: any) {
       console.log(e)
     }
