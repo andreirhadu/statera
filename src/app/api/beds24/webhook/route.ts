@@ -40,13 +40,16 @@ export async function POST(req: NextRequest) {
 
     const channel = booking.lastName.toLowerCase().includes('szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
 
+    const charge = invoiceItems
+    .filter((item: any) => (item.type === 'charge'))?.[0]
+
     if ( channel === 'travelminit' ) {
       name = 'Travelminit International SRL'
       vatCode = 'RO38869249'
       address = 'Str. Gării, Nr. 21, D1/1B'
       city = 'Cluj Napoca'
       county = 'Cluj'
-      isPaid =  true
+      isPaid = (charge && charge !== 0) ? true : false
     }
 
     if ( channel === 'airbnb' ) {
@@ -55,7 +58,7 @@ export async function POST(req: NextRequest) {
       address = "-"
       city = 'San Francisco'
       county = 'USA'
-      isPaid = true
+      isPaid = (charge && charge !== 0) ? true : false
     }
 
     if ( !address || !county || !isConfirmed || !isPaid ) {
@@ -68,9 +71,6 @@ export async function POST(req: NextRequest) {
 
     const paymentMethod = invoiceItems
     .filter((item: any) => (item.type === 'payment'))?.[0]?.description
-
-    const charge = invoiceItems
-    .filter((item: any) => (item.type === 'charge'))?.[0]
 
     var products = [{
       name: `Servicii cazare perioada ${booking.arrival} - ${booking.departure} (${paymentMethod})`,
