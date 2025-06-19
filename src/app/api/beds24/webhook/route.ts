@@ -187,10 +187,10 @@ export async function POST(req: NextRequest) {
 
       const token = response.data.token
 
-      await axios.post('https://api.beds24.com/v2/bookings', {
+      await axios.post('https://api.beds24.com/v2/bookings', [{
         id: booking.id,
         flagText: 'Facturat'
-      }, {
+      }], {
         headers: {
           'accept': 'application/json',
           'token': token,
@@ -198,7 +198,7 @@ export async function POST(req: NextRequest) {
         }
       })
     } catch (e: any) {
-      await db.collection('errors').insertOne({ data: e?.response?.data, message: e.message })
+      await db.collection('errors').insertOne({ data: e?.response?.data, message: e.message, bookingId: booking.id })
     }
 
     await db.collection('invoices').insertOne({ bookingId: booking?.id, series: response.data.series, number: response.data.number })
