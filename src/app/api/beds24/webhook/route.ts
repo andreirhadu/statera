@@ -67,8 +67,11 @@ export async function POST(req: NextRequest) {
     const paymentMethod = invoiceItems
     .filter((item: any) => (item.type === 'payment'))?.[0]?.description
 
+    const invoiceLine = invoiceItems
+    .filter((item: any) => (item.type === 'charges'))?.[0]?.description
+
     const products = [{
-      name: channel === 'travelminit' ? `rez ${booking?.id}` : `Servicii cazare perioada ${booking.arrival} - ${booking.departure} (${paymentMethod})`,
+      name: channel === 'travelminit' ? invoiceLine || 'Servicii cazare' : `Servicii cazare perioada ${booking.arrival} - ${booking.departure} (${paymentMethod})`,
       isDiscount: false,
       measuringUnitName: 'sejur',
       currency: 'RON',
@@ -133,8 +136,8 @@ export async function POST(req: NextRequest) {
       await sendMail({
         to: channel === 'travelminit' ? 'mentor@travelminit.ro' : email,
         nameSender: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea',
-        subject: `Factura ${response.data.series}-${response.data.number} - ${booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea'}`, 
-        html: channel === 'travelminit' ? `Id rezervare beds24 ${booking.id}` : generateInvoiceTemplate({ companyName: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea' }),
+        subject: channel === 'travelminit' ? invoiceLine || '-' : `Factura ${response.data.series}-${response.data.number} - ${booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea'}`, 
+        html: channel === 'travelminit' ? invoiceLine || '-' : generateInvoiceTemplate({ companyName: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea' }),
         attachments: [{ content: base64, name: `Factura ${response.data.series}-${response.data.number}.pdf`}],
       })
     } catch (e: any) {
