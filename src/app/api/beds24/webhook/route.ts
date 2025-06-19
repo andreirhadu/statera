@@ -62,7 +62,6 @@ export async function POST(req: NextRequest) {
     }
 
     if ( !address || !county || !isConfirmed || !isPaid ) {
-      console.log(booking.id)
       return Response.json({ success: true })
     }
 
@@ -115,8 +114,6 @@ export async function POST(req: NextRequest) {
         saveToDb: false
       }]
     }
-
-    console.log(products)
 
     // Emitere factură SmartBill
     const response = await axios.post(
