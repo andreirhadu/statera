@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     var isConfirmed = booking.status == 'confirmed' ? true : false
     var isPaid = invoiceItems
     .filter((item: any) => (item.type === 'payment'))
-    .findIndex((item: any) => item.status == 'Paid' ) !== -1
+    .findIndex((item: any) => item.status === 'Paid' || item.status === 'Plata' ) !== -1
 
     await db.collection('logs').insertOne({ bookingId: booking.id, address, county, isConfirmed, isPaid, invoiceItems })
 
