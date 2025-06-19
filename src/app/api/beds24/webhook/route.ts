@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     await db.collection('logs').insertOne({ bookingId: booking.id, address, county, isConfirmed, isPaid, invoiceItems })
 
-    const channel = booking.lastName.toLowerCase().includes('Szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
+    const channel = booking.lastName.toLowerCase().includes('szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
 
     if ( channel === 'travelminit' ) {
       name = 'Travelminit International SRL'
