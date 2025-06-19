@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
       saveToDb: false
     }]
 
-    if ( channel === 'travelminit' && charge ) {
+    if ( channel === 'travelminit' && charge && charge.amount != 0 ) {
       products = [{
         name: charge.description,
         isDiscount: false,
