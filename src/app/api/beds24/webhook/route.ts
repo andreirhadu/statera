@@ -98,6 +98,8 @@ export async function POST(req: NextRequest) {
         taxPercentage: 9,
         saveToDb: false
       }]
+
+      console.log(products)
     }
 
     if ( channel === 'airbnb' && charge ) {
