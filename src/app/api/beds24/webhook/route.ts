@@ -179,7 +179,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      const response = await axios.get('https://api.beds24.com/v2/bookings', {
+      const response = await axios.get('https://api.beds24.com/v2/authentication/token', {
         headers: {
           refreshToken: process.env.BEDS24_REFRESH_TOKEN
         }
