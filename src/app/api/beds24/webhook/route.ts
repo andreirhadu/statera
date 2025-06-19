@@ -141,6 +141,29 @@ export async function POST(req: NextRequest) {
       console.log(e)
     }
 
+    try {
+      const response = await axios.get('https://api.beds24.com/v2/bookings', {
+        headers: {
+          refreshToken: process.env.BEDS24_REFRESH_TOKEN
+        }
+      })
+
+      const token = response.data.token
+
+      await axios.post('https://api.beds24.com/v2/bookings', {
+        id: booking.id,
+        flagText: 'Facturat'
+      }, {
+        headers: {
+          'accept': 'application/json',
+          'token': token,
+          'Content-Type': 'application/json'
+        }
+      })
+    } catch (e: any) {
+      await db.collection('errors').insertOne({ data: e?.response?.data, message: e.message })
+    }
+
     await db.collection('invoices').insertOne({ bookingId: booking?.id, series: response.data.series, number: response.data.number })
     return Response.json({ success: true })
   } catch (e: any) {
