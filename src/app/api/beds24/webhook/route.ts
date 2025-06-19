@@ -43,6 +43,8 @@ export async function POST(req: NextRequest) {
     const charge = invoiceItems
     .filter((item: any) => (item.type === 'charge'))?.[0]
 
+    console.log(charge)
+
     if ( channel === 'travelminit' ) {
       name = 'Travelminit International SRL'
       vatCode = 'RO38869249'
