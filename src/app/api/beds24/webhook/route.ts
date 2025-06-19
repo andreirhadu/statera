@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
 
     // Date client
     var name = `${booking.firstName} ${booking.lastName}`
+    var contact = `${booking.firstName} ${booking.lastName}`
     var email = booking.email
     var phone = booking.phone
     var city = booking.city
@@ -37,10 +38,6 @@ export async function POST(req: NextRequest) {
 
     await db.collection('logs').insertOne({ bookingId: booking.id, address, county, isConfirmed, isPaid, invoiceItems })
 
-    if ( !address || !county || !isConfirmed || !isPaid ) {
-      return Response.json({ success: true })
-    }
-
     const channel = booking.lastName.toLowerCase().includes('Szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
 
     if ( channel === 'travelminit' ) {
@@ -54,27 +51,34 @@ export async function POST(req: NextRequest) {
     if ( channel === 'airbnb' ) {
       name = 'Earthport PLC/Airbnb'
       vatCode = undefined
-      address = undefined
+      address = "-"
       city = 'San Francisco'
       county = 'USA'
+    }
+
+    if ( !address || !county || !isConfirmed || !isPaid ) {
+      return Response.json({ success: true })
     }
 
     const price = invoiceItems
     .filter((item: any) => (item.type === 'payment'))
     .reduce((prev: any, curr: any) => curr.amount + prev, 0)
 
+    const paymentMethod = invoiceItems
+    .filter((item: any) => (item.type === 'payment'))?.[0]?.description
+
     const products = [{
-        name: `Rezervare ${booking.arrival} - ${booking.departure}`,
-        isDiscount: false,
-        measuringUnitName: 'buc',
-        currency: 'RON',
-        quantity: 1,
-        price,
-        isTaxIncluded: true,
-        taxName: 'Redusa',
-        taxPercentage: 9,
-        saveToDb: false
-      }]
+      name: channel === 'travelminit' ? `rez ${booking?.id}` : `Servicii cazare perioada ${booking.arrival} - ${booking.departure} (${paymentMethod})`,
+      isDiscount: false,
+      measuringUnitName: 'sejur',
+      currency: 'RON',
+      quantity: 1,
+      price,
+      isTaxIncluded: true,
+      taxName: 'Redusa',
+      taxPercentage: 9,
+      saveToDb: false
+    }]
 
     // Emitere factură SmartBill
     const response = await axios.post(
@@ -85,6 +89,7 @@ export async function POST(req: NextRequest) {
         currency: 'RON',
         client: {
           name: company || name,
+          contact,
           email,
           phone,
           address,
@@ -126,10 +131,10 @@ export async function POST(req: NextRequest) {
 
     try {
       await sendMail({
-        to: email,
+        to: channel === 'travelminit' ? 'mentor@travelminit.ro' : email,
         nameSender: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea',
         subject: `Factura ${response.data.series}-${response.data.number} - ${booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea'}`, 
-        html: generateInvoiceTemplate({ companyName: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea' }),
+        html: channel === 'travelminit' ? `Id rezervare beds24 ${booking.id}` : generateInvoiceTemplate({ companyName: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea' }),
         attachments: [{ content: base64, name: `Factura ${response.data.series}-${response.data.number}.pdf`}],
       })
     } catch (e: any) {
