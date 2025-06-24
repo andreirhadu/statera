@@ -20,6 +20,8 @@ export async function POST(req: NextRequest) {
 
     const invoiceItems = data?.invoiceItems || []
 
+    const randomNumber = Math.floor(Math.random() * 6) + 1
+
     // Date client
     var name = `${booking.firstName} ${booking.lastName}`
     var contact = `${booking.firstName} ${booking.lastName}`
@@ -43,8 +45,6 @@ export async function POST(req: NextRequest) {
     const charge = invoiceItems
     .filter((item: any) => (item.type === 'charge'))?.[0]
 
-    console.log(charge)
-
     if ( channel === 'travelminit' ) {
       name = 'Travelminit International SRL'
       vatCode = 'RO38869249'
@@ -65,6 +65,16 @@ export async function POST(req: NextRequest) {
 
     if ( !address || !county || !isConfirmed || !isPaid ) {
       return Response.json({ success: true })
+    }
+
+    try {
+      if ( city.toLowerCase() === 'bucuresti' || city.toLowerCase() === 'bucurești' || city.toLowerCase() === 'bucharest' ) {
+        if ( !county.toLowerCase().includes('sector')) {
+          county = 'Sector' + String(randomNumber)
+        }
+      }
+    } catch (e: any) {
+      await db.collection('errors').insertOne({ data: e?.response?.data, message: e.message })
     }
 
     const price = invoiceItems
