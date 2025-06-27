@@ -31,8 +31,8 @@ export async function POST(req: NextRequest) {
     var country = booking.country ? (booking.country.length != 0 ? booking.country.toUpperCase() : 'RO') : 'RO'
     var county = data.booking.custom7.length != 0 ? data.booking.custom7.replace("Judet/County : ", "") : null
     var address = data.booking.custom9.length != 0 ? data.booking.custom9.replace("Strada, nr/Street, no : ", "") : null
-    var vatCode = data.booking.custom6.length > 3 ? data.booking.custom6 : undefined
-    var company = data.booking.custom5.length > 3 ? data.booking.custom5 : null
+    var vatCode = data.booking?.custom6?.replace("Cod fiscal/VAT number : ", "").length > 3 ? data.booking?.custom6?.replace("Cod fiscal/VAT number : ", "") : undefined
+    var company = data.booking?.custom5?.replace("Denumire firma/ Company name : ", "").length > 3 ? data.booking?.custom5?.replace("Denumire firma/ Company name : ", "") : null
     var isConfirmed = booking.status == 'confirmed' ? true : false
     var isPaid = invoiceItems
     .filter((item: any) => (item.type === 'payment'))
