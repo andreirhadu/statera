@@ -1,5 +1,5 @@
-export const generateInvoiceTemplate = ({ companyName }: { companyName: string}) => (
-  `Bună ziua,
+export const generateInvoiceTemplate = ({ name }: { name: string}) => (
+  `Bună ziua, ${name},
 <br><br>
 Vă transmitem atașată factura cu detaliile rezervării.
 <br><br>

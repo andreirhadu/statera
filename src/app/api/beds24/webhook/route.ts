@@ -84,6 +84,10 @@ export async function POST(req: NextRequest) {
     const paymentMethod = invoiceItems
     .filter((item: any) => (item.type === 'payment'))?.[0]?.description
 
+    if ( price === 0 ) {
+      return Response.json({ success: true })
+    }
+
     var products = [{
       name: `Servicii cazare perioada ${booking.arrival} - ${booking.departure} (${paymentMethod})`,
       isDiscount: false,
@@ -182,7 +186,7 @@ export async function POST(req: NextRequest) {
           to: email,
           nameSender: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea',
           subject: `Factura ${response.data.series}-${response.data.number} - ${booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea'}`, 
-          html: generateInvoiceTemplate({ companyName: booking.propertyId == 129475 ? 'Aria Boutique Oradea' : 'Moonlight Central Apartments Oradea' }),
+          html: generateInvoiceTemplate({ name: booking?.firstName || "" }),
           attachments: [{ content: base64, name: `Factura ${response.data.series}-${response.data.number}.pdf`}],
         })
       }
