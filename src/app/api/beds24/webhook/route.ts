@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     .filter((item: any) => (item.type === 'payment'))
     .findIndex((item: any) => item.status === 'Paid' || item.status === 'Plata' ) !== -1
 
-    const channel = booking.lastName.toLowerCase().includes('szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
+    const channel = booking.lastName.toLowerCase().includes('szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : (booking.channel === 'expedia' ? 'expedia' : 'other'))
 
     const charge = invoiceItems
     .filter((item: any) => (item.type === 'charge'))?.[0]
@@ -59,6 +59,14 @@ export async function POST(req: NextRequest) {
       city = 'San Francisco'
       county = 'USA'
       isPaid = (charge && charge.amount !== 0) ? true : false
+    }
+
+    if ( channel === 'expedia' ) {
+      name = 'Expedia Lodging Partner Services Sàrl'
+      vatCode = 'CHE115256336'
+      address = "Rue du 31 Décembre 40-42 et 44-46"
+      city = 'Genève'
+      county = 'Switzerland'
     }
 
     await db.collection('logs').insertOne({ bookingId: booking.id, address, county, isConfirmed, isPaid, invoiceItems })
