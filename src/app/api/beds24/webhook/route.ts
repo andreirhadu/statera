@@ -38,8 +38,6 @@ export async function POST(req: NextRequest) {
     .filter((item: any) => (item.type === 'payment'))
     .findIndex((item: any) => item.status === 'Paid' || item.status === 'Plata' ) !== -1
 
-    await db.collection('logs').insertOne({ bookingId: booking.id, address, county, isConfirmed, isPaid, invoiceItems })
-
     const channel = booking.lastName.toLowerCase().includes('szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : 'other')
 
     const charge = invoiceItems
@@ -62,6 +60,8 @@ export async function POST(req: NextRequest) {
       county = 'USA'
       isPaid = (charge && charge.amount !== 0) ? true : false
     }
+
+    await db.collection('logs').insertOne({ bookingId: booking.id, address, county, isConfirmed, isPaid, invoiceItems })
 
     if ( !address || !county || !isConfirmed || !isPaid ) {
       return Response.json({ success: true })
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
       saveToDb: false
     }]
 
-    if ( channel === 'travelminit' && charge && charge.amount != 0 ) {
+    if ( channel === 'travelminit' && charge ) {
       products = [{
         name: charge.description,
         isDiscount: false,
