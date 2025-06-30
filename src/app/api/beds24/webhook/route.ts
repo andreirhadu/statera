@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     const paymentMethod = invoiceItems
     .filter((item: any) => (item.type === 'payment'))?.[0]?.description
 
-    if ( price === 0 ) {
+    if ( channel === 'other' && price === 0 ) {
       return Response.json({ success: true })
     }
 
