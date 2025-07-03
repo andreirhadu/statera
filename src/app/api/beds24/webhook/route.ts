@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     .filter((item: any) => (item.type === 'payment'))
     .findIndex((item: any) => item.status === 'Paid' || item.status === 'Plata' ) !== -1
 
-    const channel = booking.lastName.toLowerCase().includes('szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : (booking.channel === 'expedia' ? 'expedia' : 'other'))
+    const channel = booking.lastName.toLowerCase().includes('szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : (booking.referer === 'Egencia' ? 'expedia' : 'other'))
 
     const charge = invoiceItems
     .filter((item: any) => (item.type === 'charge'))?.[0]
