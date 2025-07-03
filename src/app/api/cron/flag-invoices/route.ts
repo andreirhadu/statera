@@ -3,12 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
 import { ObjectId } from 'mongodb'
 import { db } from '@/lib/db'
+import { NextRequest } from 'next/server'
 
 const bedsRefreshToken = process.env.BEDS24_REFRESH_TOKEN!
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest) {
   try {
-    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })
 
     const invoicesCol = db.collection('invoices')
 
@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       bookingId: { $exists: true }
     }).toArray()
 
-    if (!invoices.length) return res.status(200).json({ message: 'No invoices to update' })
+    if (!invoices.length) return Response.json({ message: 'No invoices to update' })
 
     const { data: { token } } = await axios.get(
       'https://api.beds24.com/v2/authentication/token',
@@ -42,9 +42,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       { $set: { flagSet: true, updatedAt: new Date() } }
     )
 
-    return res.status(200).json({ updated: invoices.length })
+    return Response.json({ updated: invoices.length })
   } catch (e: any) {
     console.error('[cron error]', e.response?.data || e.message)
-    return res.status(500).json({ error: e.message || 'Internal error' })
+    return Response.json({ error: e.message || 'Internal error' }, { status: 500 })
   }
 }
