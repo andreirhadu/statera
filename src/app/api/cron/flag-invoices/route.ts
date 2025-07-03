@@ -1,5 +1,4 @@
 // pages/api/cron/flag-invoices.ts
-import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
 import { ObjectId } from 'mongodb'
 import { db } from '@/lib/db'
@@ -7,7 +6,7 @@ import { NextRequest } from 'next/server'
 
 const bedsRefreshToken = process.env.BEDS24_REFRESH_TOKEN!
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
 
     const invoicesCol = db.collection('invoices')
