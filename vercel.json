@@ -1,5 +1,5 @@
 {
-  "cron": [
+  "crons": [
     {
       "path": "/api/cron/flag-invoices",
       "schedule": "*/10 * * * *"
