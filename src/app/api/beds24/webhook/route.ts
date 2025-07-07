@@ -90,7 +90,10 @@ export async function POST(req: NextRequest) {
     .reduce((prev: any, curr: any) => curr.amount + prev, 0)
 
     const paymentMethod = invoiceItems
-    .filter((item: any) => (item.type === 'payment'))?.[0]?.description
+    .filter((item: any) => item.type === 'payment')
+    .map((item: any) => item.description || "-")
+    .join(', ')
+
 
     if ( ['other', 'expedia'].includes(channel) && price === 0 ) {
       return Response.json({ success: true })
