@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     var isConfirmed = booking.status == 'confirmed' ? true : false
     var isPaid = invoiceItems
     .filter((item: any) => (item.type === 'payment'))
-    .findIndex((item: any) => item.status === 'Paid' || item.status === 'Plata' ) !== -1
+    .findIndex((item: any) => item.status.toLowerCase() == 'paid' || item.status.toLowerCase() == 'plata' ) !== -1
 
     const channel = booking.lastName.toLowerCase().includes('szallas') ? 'travelminit' : (booking.channel === 'airbnb' ? 'airbnb' : (booking.referer === 'Egencia' ? 'expedia' : 'other'))
 
