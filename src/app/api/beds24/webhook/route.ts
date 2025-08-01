@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
       price,
       isTaxIncluded: true,
       taxName: 'Redusa',
-      taxPercentage: 9,
+      taxPercentage: 11,
       saveToDb: false
     }]
 
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
         price: charge.amount,
         isTaxIncluded: true,
         taxName: 'Redusa',
-        taxPercentage: 9,
+        taxPercentage: 11,
         saveToDb: false
       }]
     }
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
         price: charge.amount,
         isTaxIncluded: true,
         taxName: 'Redusa',
-        taxPercentage: 9,
+        taxPercentage: 11,
         saveToDb: false
       }]
     }
