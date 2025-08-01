@@ -5,10 +5,10 @@ import axios from "axios"
 import { NextRequest } from "next/server"
 
 export async function POST(req: NextRequest) {
-  try {
-    const data = await req.json()
-    const booking = data?.booking
+  const data = await req.json()
+  const booking = data?.booking
 
+  try {
     const invoice = await db.collection('invoices').findOne({ bookingId: booking?.id })
 
     if ( invoice ) {
@@ -232,7 +232,7 @@ export async function POST(req: NextRequest) {
     return Response.json({ success: true })
   } catch (e: any) {
     console.log(e?.response?.data || e.message)
-    await db.collection('errors').insertOne({ data: e?.response?.data, message: e.message })
+    await db.collection('errors').insertOne({ data: e?.response?.data, message: e.message, bookingId: booking?.id })
     return Response.json({ error: e.message || 'Eroare necunoscută' }, { status: 400 })
   }
 }
