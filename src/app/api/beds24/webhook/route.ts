@@ -53,11 +53,12 @@ export async function POST(req: NextRequest) {
     }
 
     if ( channel === 'airbnb' ) {
-      name = 'Earthport PLC/Airbnb'
-      vatCode = undefined
-      address = "-"
-      city = 'San Francisco'
-      county = 'USA'
+      name = 'Airbnb Ireland UC'
+      vatCode = 'IE9827384L'
+      address = "25 North Wall Quay"
+      city = 'Dublin'
+      county = '-'
+      country = 'Irealand'
       isPaid = (charge && charge.amount !== 0) ? true : false
     }
 
@@ -66,7 +67,8 @@ export async function POST(req: NextRequest) {
       vatCode = 'CHE115256336'
       address = "Rue du 31 Décembre 40-42 et 44-46"
       city = 'Genève'
-      county = 'Switzerland'
+      county = 'République et canton de Genève' 
+      country = 'Switzerland'
     }
 
     await db.collection('logs').insertOne({ bookingId: booking.id, address, county, isConfirmed, isPaid, invoiceItems })
