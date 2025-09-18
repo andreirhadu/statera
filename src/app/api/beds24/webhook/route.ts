@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     .filter((item: any) => (item.type === 'charge'))?.[0]
 
     if ( channel === 'travelminit' ) {
-      name = 'Travelminit International SRL'
+      company = 'Travelminit International SRL'
       vatCode = 'RO38869249'
       address = 'Str. Gării, Nr. 21, D1/1B'
       city = 'Cluj Napoca'
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     }
 
     if ( channel === 'airbnb' ) {
-      name = 'Airbnb Ireland UC'
+      company = 'Airbnb Ireland UC'
       vatCode = 'IE9827384L'
       address = "25 North Wall Quay"
       city = 'Dublin'
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     }
 
     if ( channel === 'expedia' ) {
-      name = 'Expedia Lodging Partner Services Sàrl'
+      company = 'Expedia Lodging Partner Services Sàrl'
       vatCode = 'CHE115256336'
       address = "Rue du 31 Décembre 40-42 et 44-46"
       city = 'Genève'
