@@ -4,9 +4,20 @@ import { sendMail } from "@/utils/sendMail"
 import axios from "axios"
 import { NextRequest } from "next/server"
 
+const cifs = {
+  aria: '53595198',
+  statera: 'RO35750609'
+}
+
+const series = {
+  aria: 'ZOR',
+  statera: 'GLD'
+}
+
 export async function POST(req: NextRequest) {
   const data = await req.json()
   const booking = data?.booking
+  const infoItems = data?.infoItems
 
   try {
     const invoice = await db.collection('invoices').findOne({ bookingId: booking?.id })
@@ -144,12 +155,14 @@ export async function POST(req: NextRequest) {
       }]
     }
 
+    const invoiceWithAria = infoItems?.length ? infoItems.findIndex((item: any) => item.code === 'ARIA') !== -1 : false
+
     // Emitere factură SmartBill
     const response = await axios.post(
       'https://ws.smartbill.ro/SBORO/api/invoice',
       {
-        companyVatCode: 'RO35750609', // înlocuiește cu CIF-ul tău
-        seriesName: 'GLD',         // seria ta din SmartBill
+        companyVatCode: invoiceWithAria ? cifs.aria : cifs.statera, // înlocuiește cu CIF-ul tău
+        seriesName: invoiceWithAria ? series.aria : series.statera,         // seria ta din SmartBill
         currency: 'RON',
         client: {
           name: company || name,
@@ -180,7 +193,7 @@ export async function POST(req: NextRequest) {
       }
     )
 
-    const response1 = await axios.get(`https://ws.smartbill.ro/SBORO/api/invoice/pdf?cif=RO35750609&seriesname=${response.data.series}&number=${response.data.number}`, {
+    const response1 = await axios.get(`https://ws.smartbill.ro/SBORO/api/invoice/pdf?cif=${invoiceWithAria ? cifs.aria : cifs.statera}&seriesname=${response.data.series}&number=${response.data.number}`, {
       responseType: 'arraybuffer',
       responseEncoding: 'binary',
       headers: {
