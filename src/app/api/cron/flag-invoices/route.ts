@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 
     const batch = invoices.map(inv => ({
       id: inv.bookingId,
-      flagText: 'Facturat'
+      flagText: inv.invoiceWithAria ? 'Facturat Aria' : 'Facturat Statera'
     }))
 
     await axios.post('https://api.beds24.com/v2/bookings', batch, {

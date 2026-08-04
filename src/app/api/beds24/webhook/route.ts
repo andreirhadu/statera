@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
   const data = await req.json()
   const booking = data?.booking
   const infoItems = data?.infoItems
+  let invoiceWithAria
 
   try {
     const invoice = await db.collection('invoices').findOne({ bookingId: booking?.id })
@@ -155,7 +156,7 @@ export async function POST(req: NextRequest) {
       }]
     }
 
-    const invoiceWithAria = infoItems?.length ? infoItems.findIndex((item: any) => item.code === 'ARIA') !== -1 : false
+    invoiceWithAria = infoItems?.length ? infoItems.findIndex((item: any) => item.code === 'ARIA') !== -1 : false
 
     // Emitere factură SmartBill
     const response = await axios.post(
@@ -231,7 +232,7 @@ export async function POST(req: NextRequest) {
 
       await axios.post('https://api.beds24.com/v2/bookings', [{
         id: booking.id,
-        flagText: 'Facturat'
+        flagText: invoiceWithAria ? 'Facturat Aria' : 'Facturat Statera'
       }], {
         headers: {
           'accept': 'application/json',
@@ -243,7 +244,7 @@ export async function POST(req: NextRequest) {
       await db.collection('errors').insertOne({ data: e?.response?.data, message: e.message, bookingId: booking.id })
     }
 
-    await db.collection('invoices').insertOne({ bookingId: booking?.id, series: response.data.series, number: response.data.number })
+    await db.collection('invoices').insertOne({ bookingId: booking?.id, series: response.data.series, number: response.data.number, invoiceWithAria })
     return Response.json({ success: true })
   } catch (e: any) {
     console.log(e?.response?.data || e.message)
