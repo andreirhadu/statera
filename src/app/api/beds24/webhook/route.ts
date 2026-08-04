@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
   const data = await req.json()
   const booking = data?.booking
   const infoItems = data?.infoItems
-  let invoiceWithAria
 
   try {
     const invoice = await db.collection('invoices').findOne({ bookingId: booking?.id })
@@ -156,7 +155,7 @@ export async function POST(req: NextRequest) {
       }]
     }
 
-    invoiceWithAria = infoItems?.length ? infoItems.findIndex((item: any) => item.code === 'ARIA') !== -1 : false
+    const invoiceWithAria = infoItems?.length ? infoItems.findIndex((item: any) => item.code === 'ARIA') !== -1 : false
 
     // Emitere factură SmartBill
     const response = await axios.post(
