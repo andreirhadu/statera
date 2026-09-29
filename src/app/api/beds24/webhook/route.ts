@@ -37,8 +37,7 @@ export async function POST(req: NextRequest) {
     var name = `${booking.firstName} ${booking.lastName}`
     var contact = `${booking.firstName} ${booking.lastName}`
     var email = booking.email
-    var phone = booking.phone
-    var city = booking.city
+    var city = data.booking.custom3.length != 0 ? data.booking.custom3.replace("City : ", "") : booking.city
     var country = booking.country ? (booking.country.length != 0 ? booking.country.toUpperCase() : 'RO') : 'RO'
     var county = data.booking.custom7.length != 0 ? data.booking.custom7.replace("Judet/County : ", "") : null
     var address = data.booking.custom9.length != 0 ? data.booking.custom9.replace("Strada, nr/Street, no : ", "") : null
