@@ -167,7 +167,6 @@ export async function POST(req: NextRequest) {
           name: company || name,
           contact,
           email,
-          // phone,
           address,
           city,
           county,
